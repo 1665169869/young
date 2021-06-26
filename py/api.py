@@ -38,7 +38,7 @@ class young:
 
         url = "http://{0}/ajax/login".format(self.ip)
         if len(code) != 4:
-            return "请输入4位的验证码"
+            return -1 # 表示验证码不是四位数的
 
         jsObj = execjs.compile(self.JS_STR)
         loginkey = jsObj.call('login', username, password, code)

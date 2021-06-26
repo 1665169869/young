@@ -10,22 +10,6 @@ import socket
 from os import getcwd, path
 import json
 
-# def code():
-#     Yn = api.young()
-#     data = Yn.changeCode()
-
-
-# root = Tk()
-# root.geometry("300x300+600+250")
-# root.title("天翼校园")
-
-# img = Image.open(getcwd() + "\\py\\code.jpg")
-# photo = ImageTk.PhotoImage(img)
-# img_code = Canvas(root, width=103, height=40, bg='#fff')
-# img_code.create_image(52,22,image=(photo))
-# img_code.pack()
-
-# root.mainloop()
 
 class windows:
     def __init__(self, init_windows):
@@ -68,29 +52,30 @@ class windows:
 
         # 文本框
         ## 创建组件对象
-        self.init_user_Text = Text(self.init_windows,width=25, height=2, wrap="none")
-        self.init_password_Text = Text(self.init_windows,width=25, height=2, wrap="none")
-        self.init_code_Text = Text(self.init_windows,width=10, height=2, wrap="none")
-        self.init_userIP_Text = Text(self.init_windows, width=25, height=2, wrap='none')
+        size = Font(size=18)
+        self.init_user_Text = Entry(self.init_windows,width=15, font=size, relief=SUNKEN)
+        self.init_password_Text = Entry(self.init_windows,width=15, font=size, show="*", relief=SUNKEN)
+        self.init_code_Text = Entry(self.init_windows,width=5, font=size, relief=SUNKEN)
+        self.init_userIP_Text = Entry(self.init_windows, width=15, font=size, relief=SUNKEN)
 
         ## 载入组件
         self.init_userIP_Text.place(y=25, x=65)
         self.init_user_Text.place(y=65, x=65)
         self.init_password_Text.place(y=115, x=65)
         self.init_code_Text.place(y=165, x=65)
-        self.init_userIP_Text.insert(1.0, self.userIP)
+        self.init_userIP_Text.insert(0, self.userIP)
 
         # 验证码图片框
         ## 创建组件对象
-        self.init_code_Canvas = Canvas(self.init_windows, width=103, height=40, bg='#fff')
+        self.init_code_Canvas = Button(self.init_windows, width=103, height=40, bg='#fff', bd=0, image=self.image_code_data, command=self.getCode)
 
         ## 载入组件
         self.init_code_Canvas.place(y=160, x=145)
-        self.init_code_Canvas.create_image(52, 22, image=self.image_code_data)
+
 
         # 按钮组件
         ## 创建组件对象
-        self.init_login_Button = Button(text="登录", height=1, width=10, takefocus=True, command=self.login)
+        self.init_login_Button = Button(text="登录", height=2, width=10, takefocus=True, command=self.login, bd=1)
 
         ## 载入组件
         self.init_login_Button.place(y=220, x=100)
@@ -104,15 +89,15 @@ class windows:
         self.password_Text = ""
         self.code_Text = ""
         try:
-            self.user_Text = self.init_user_Text.get(1.0, END).split()[0]
-            self.password_Text = self.init_password_Text.get(1.0, END).split()[0]
-            self.code_Text = self.init_code_Text.get(1.0, END).split()[0]
-            self.userIP = self.init_userIP_Text.get(1.0, END).split()[0]
+            self.user_Text = self.init_user_Text.get().split()[0]
+            self.password_Text = self.init_password_Text.get().split()[0]
+            self.code_Text = self.init_code_Text.get().split()[0]
+            self.userIP = self.init_userIP_Text.get().split()[0]
         except:
             pass
 
-        # print(self.user_Text, self.password_Text, self.code_Text, self.userIP)
 
+ 
         if self.user_Text == "":
             messagebox.showwarning("提示：", "请输入账号！")
             self.init_login_Button.config(state=NORMAL)
@@ -133,19 +118,24 @@ class windows:
             self.init_login_Button.config(state=NORMAL)
             return
 
-        self.data = self.Young.login(self.user_Text, self.password_Text, self.code_Text, self.userIP)
+        try:
+            self.data = self.Young.login(self.user_Text, self.password_Text, self.code_Text, self.userIP)
+        except:
+            messagebox.showerror("错误：", "程序崩溃了".format(self.data))
 
         if isinstance(self.data,int):
-            messagebox.showerror("错误：", "状态码：{0}\n出现了不可意料的错误".format(self.data))
+            if self.data == -1:
+                messagebox.showerror("错误：", "状态码：{0}\n验证码不是四位数！".format(self.data))
+            else:
+                messagebox.showerror("错误：", "状态码：{0}\n出现了不可意料的错误".format(self.data))
         else:
             self.data = json.loads(self.data)
-        
-        if self.data['resultCode'] == '0':
-            messagebox.showinfo("状态：", "状态码：{0}\n登陆成功！".format(self.data['resultCode']))
-        else:
-            messagebox.showinfo("状态：", "状态码：{0}\n信息：{1}".format(self.data['resultCode'], self.data['resultInfo']))
+            if self.data['resultCode'] == '0':
+                messagebox.showinfo("状态：", "状态码：{0}\n登陆成功！".format(self.data['resultCode']))
+            else:
+                messagebox.showinfo("状态：", "状态码：{0}\n信息：{1}".format(self.data['resultCode'], self.data['resultInfo']))
+            self.keep(True)
         self.getCode(True)
-        self.keep(True)
         self.init_login_Button.config(state=NORMAL)
 
     def keep(self, isKeep=False):
@@ -177,7 +167,7 @@ class windows:
                     f_data.close()
                 
 
-    def getCode(self, b):
+    def getCode(self, b=True):
         try:
             self.image_code_data = self.Young.changeCode()
             with open(getcwd() + "\\code.jpg", "wb+",) as self.F_Image:
@@ -186,7 +176,7 @@ class windows:
                 self.F_Image.close()
                 self.image_code_data = ImageTk.PhotoImage(Image.open(getcwd() + "\\code.jpg"))
             if b == True:
-                self.init_code_Canvas.create_image(52, 22, image=self.image_code_data)
+                self.init_code_Canvas.config(image=self.image_code_data)
         except requests.exceptions.HTTPError:
             messagebox.showerror("错误：", "请连接校园网！")
         except:
