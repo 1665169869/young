@@ -1,37 +1,41 @@
-## Welcome to GitHub Pages
+# 广东天翼校园Young第三方登录
 
-You can use the [editor on GitHub](https://github.com/1665169869/young/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+## 开源协议 
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+[AGPL V3](LICENSE)
 
-### Markdown
+特别指出禁止任何个人或者公司将本代码投入商业使用
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+由此造成的后果和法律责任均与本人无关。
 
-```markdown
-Syntax highlighted code block
+## 使用教程
 
-# Header 1
-## Header 2
-### Header 3
+广州工贸技师学院南校区可以直接使用
 
-- Bulleted
-- List
+|变量|类型|说明|
+|--|--|--|
+|ip|str|自行替换125.88.59.131:10001<br>换成自己的校园网ip|
+|wlanAcIP|str|自行抓包<br>一般连接WIFI后自动弹出的页面的url就有|
 
-1. Numbered
-2. List
+### 例子：
 
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+```python
+import api
+if __name__ == "__main__":
+    Young = api.young(ip='125.88.59.131:10001')
+    f = open("code.jpg", "wb+")
+    data = Young.changeCode()
+    f.write(data)
+    f.flush()
+    f.close()
+    user = input("账号：")
+    password = input("密码：")
+    code = input("验证码(请自行打开运行目录中的code.jpg查看验证码)：")
+    userIP = input("IP（连接WIFI后的IPV4）：")
+    print(Young.login(user, password, code, userIP))
+    input("回车关闭。")
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+该版本是网页版登录接口，不是传统的pptp和xxx协议
 
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/1665169869/young/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+该项目已停止维护，学校准备换运营商
