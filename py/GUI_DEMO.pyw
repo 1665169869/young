@@ -154,8 +154,8 @@ class windows:
                 with open(self.path_config, encoding='utf-8') as f_data:
                     try:
                         self.data = json.loads(f_data.read())
-                        self.init_user_Text.insert(1.0, self.data['username'])
-                        self.init_password_Text.insert(1.0, self.data['password'])
+                        self.init_user_Text.insert(0, self.data['username'])
+                        self.init_password_Text.insert(0, self.data['password'])
                     except:
                         pass
             else:
