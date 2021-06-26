@@ -1,6 +1,6 @@
 
 from genericpath import isfile
-from tkinter import *
+from tkinter import Label, Entry, Button, Tk, SUNKEN, DISABLED, NORMAL
 import tkinter.messagebox as messagebox
 from tkinter.font import Font
 from PIL import Image, ImageTk
